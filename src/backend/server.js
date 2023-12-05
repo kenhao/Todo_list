@@ -1,54 +1,41 @@
 const express = require('express');
-const { database } = require('../firebase/firebase_config'); // 导入Firebase数据库实例
-const { ref, set, update, remove, get } = require('firebase/database');
+const firebase = require('firebase/app');
+const { getDatabase, ref, onValue } = require('firebase/database');
+
+require('firebase/database');
+
+const cors = require('cors');
+
+// Firebase initialization
+const firebaseConfig = {
+    apiKey: "AIzaSyAH5XWoZQ75E_XcE-dTTncQBJPObND8q9k",
+    authDomain: "todo-list-da3c5.firebaseapp.com",
+    projectId: "todo-list-da3c5",
+    storageBucket: "todo-list-da3c5.appspot.com",
+    messagingSenderId: "114661391534",
+    appId: "1:114661391534:web:f3db5cb8994c09e77e813f",
+    measurementId: "G-K0M069SCNV"
+};
+const firebaseApp = firebase.initializeApp(firebaseConfig);
+
 const app = express();
 
-app.use(express.json()); // 解析JSON请求体
+// use cors to allow cross origin resource sharing
+app.use(cors());
 
-const port = 3001;
+// use express-json to parse json data
+app.use(express.json());
 
-// create
-app.post('/todo', (req, res) => {
-  const newTodo = req.body;
-  const newTodoRef = ref(database, 'todos/' + newTodo.id);
-  set(newTodoRef, newTodo)
-    .then(() => res.status(200).send('Todo added'))
-    .catch(error => res.status(500).send(error));
-});
-
-// update
-app.put('/todo/:id', (req, res) => {
-  const id = req.params.id;
-  const updatedTodo = req.body;
-  const todoRef = ref(database, 'todos/' + id);
-  update(todoRef, updatedTodo)
-    .then(() => res.status(200).send('Todo updated'))
-    .catch(error => res.status(500).send(error));
-});
-
-// delete
-app.delete('/todo/:id', (req, res) => {
-  const id = req.params.id;
-  const todoRef = ref(database, 'todos/' + id);
-  remove(todoRef)
-    .then(() => res.status(200).send('Todo deleted'))
-    .catch(error => res.status(500).send(error));
-});
-
-// read
 app.get('/todos', (req, res) => {
-  const todosRef = ref(database, 'todos');
-  get(todosRef)
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        res.status(200).json(snapshot.val());
-      } else {
-        res.status(404).send('No todos found');
-      }
-    })
-    .catch(error => res.status(500).send(error));
-});
+    const databaseRef = ref(getDatabase(firebaseApp), 'todos');
+    onValue(databaseRef, (snapshot) => {
+      res.json(snapshot.val());
+    }, (error) => {
+      res.status(500).json({ error: error.message });
+    });
+  });
 
+const port = 3000;
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });

@@ -3,28 +3,34 @@ import React,{useState, useEffect} from "react";
 // import TodoList from "./components/TodoList";
 // import Data from "./components/Data";
 
-import { database } from './firebase/firebase_config';
-import { ref, onValue, off } from 'firebase/database';
+// import { database } from './firebase/firebase_config';
+// import { ref, onValue, off } from 'firebase/database';
 
 const App = () => {
   
-  const [data, setData] = useState({}); // 用于存储从Firebase读取的数据
+  const [todos, setTodos] = useState([]);
 
   useEffect(() => {
-    const databaseRef = ref(database, 'Test'); // 更换为您的数据路径
-    onValue(databaseRef, (snapshot) => {
-      const dbData = snapshot.val();
-      console.log('Firebase Data:', dbData); // 输出Firebase数据
-      setData(dbData);
-    });
-
-    return () => off(databaseRef);
+    fetch('http://localhost:3000/todos')
+      .then(response => {
+        if (!response.ok) {
+          console.log('3');
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => setTodos(data))
+      .catch(error => console.error('Error:', error));
   }, []);
 
   return (
     <div className="App">
-      <h1>Firebase Data</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>  {/* 以JSON格式输出数据 */}
+      <h1>Todo List</h1>
+      <ul>
+        {todos && Object.entries(todos).map(([key, value]) => (
+          <li key={key}>{key}: {value}</li>
+        ))}
+      </ul>
     </div>
   );
 }
