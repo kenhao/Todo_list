@@ -1,35 +1,32 @@
-import React,{useState} from "react";
-import Form from "./components/Form";
-import TodoList from "./components/TodoList";
+import React,{useState, useEffect} from "react";
+// import Form from "./components/Form";
+// import TodoList from "./components/TodoList";
+// import Data from "./components/Data";
+
+import { database } from './firebase/firebase_config';
+import { ref, onValue, off } from 'firebase/database';
 
 const App = () => {
+  
+  const [data, setData] = useState({}); // 用于存储从Firebase读取的数据
 
-  const [input,setInput] = useState("");
-  const [todos,setTodos] = useState([]);
+  useEffect(() => {
+    const databaseRef = ref(database, 'Test'); // 更换为您的数据路径
+    onValue(databaseRef, (snapshot) => {
+      const dbData = snapshot.val();
+      console.log('Firebase Data:', dbData); // 输出Firebase数据
+      setData(dbData);
+    });
 
- return (
-   <div className="container">
-     <div className="app-box">
-       <div>
-         <h1 className='header'>TodoList</h1>
-       </div>
-       <div>
-       <Form 
-          input={input}
-          setInput={setInput}
-          todos={todos}
-          setTodos={setTodos}
-        />
-       </div> 
-       <div>
-         <TodoList
-          todos = {todos}
-          setTodos = {setTodos}
-         />
-       </div>       
-     </div>       
-   </div>
- );
+    return () => off(databaseRef);
+  }, []);
+
+  return (
+    <div className="App">
+      <h1>Firebase Data</h1>
+      <pre>{JSON.stringify(data, null, 2)}</pre>  {/* 以JSON格式输出数据 */}
+    </div>
+  );
 }
 
 export default App;
