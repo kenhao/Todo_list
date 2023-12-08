@@ -1,6 +1,6 @@
 const express = require('express');
 const firebase = require('firebase/app');
-const { getDatabase, ref, onValue } = require('firebase/database');
+const { getDatabase, ref, get, push, remove, update } = require('firebase/database');
 
 require('firebase/database');
 
@@ -26,16 +26,47 @@ app.use(cors());
 // use express-json to parse json data
 app.use(express.json());
 
+// get all todos
 app.get('/todos', (req, res) => {
     const databaseRef = ref(getDatabase(firebaseApp), 'todos');
-    onValue(databaseRef, (snapshot) => {
+    get(databaseRef).then((snapshot) => {
       res.json(snapshot.val());
-    }, (error) => {
+    }).catch((error) => {
       res.status(500).json({ error: error.message });
     });
   });
+  
+ 
+// add todo 
+app.post('/todos', (req, res) => {
+    const todo = req.body; 
+    const todosRef = ref(getDatabase(firebaseApp), 'todos');
+    push(todosRef, todo) 
+      .then(() => res.status(200).send('Todo added'))
+      .catch(error => res.status(500).json({ error: error.message }));
+  });
 
-const port = 3000;
+// delete todo
+app.delete('/todos/:id', (req, res) => {
+    const id = req.params.id;
+    const todoRef = ref(getDatabase(firebaseApp), `todos/${id}`);
+    remove(todoRef)
+      .then(() => res.status(200).send('Todo deleted'))
+      .catch(error => res.status(500).json({ error: error.message }));
+  });
+
+// update todo
+app.put('/todos/:id', (req, res) => {
+    const id = req.params.id;
+    const updatedTodo = req.body;
+    const todoRef = ref(getDatabase(firebaseApp), `todos/${id}`);
+    update(todoRef, updatedTodo)
+      .then(() => res.status(200).send('Todo updated'))
+      .catch(error => res.status(500).json({ error: error.message }));
+  });
+
+
+const port = 3001;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
