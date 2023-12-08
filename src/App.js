@@ -22,7 +22,7 @@ const App = () => {
   const fetchTodos = () => {
     fetch('http://localhost:3001/todos')
       .then(response => response.json())
-      .then(data => setTodos(data))
+      .then(data => setTodos(data || {}))
       .catch(error => console.error('Error:', error));
   };
 
