@@ -30,7 +30,7 @@ app.use(express.json());
 app.get('/todos', (req, res) => {
     const databaseRef = ref(getDatabase(firebaseApp), 'todos');
     get(databaseRef).then((snapshot) => {
-      res.json(snapshot.val());
+      res.json(snapshot.val()); // 回傳所有的todos
     }).catch((error) => {
       res.status(500).json({ error: error.message });
     });
@@ -39,9 +39,9 @@ app.get('/todos', (req, res) => {
  
 // add todo 
 app.post('/todos', (req, res) => {
-    const todo = req.body; 
+    const todo = req.body; // get todo from request body 
     const todosRef = ref(getDatabase(firebaseApp), 'todos');
-    push(todosRef, todo) 
+    push(todosRef, todo) // add todo to database and ID will be generated in Firebase
       .then(() => res.status(200).send('Todo added'))
       .catch(error => res.status(500).json({ error: error.message }));
   });
