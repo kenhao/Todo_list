@@ -1,6 +1,6 @@
 # TodoList Practice
 ## Introduction
-This project is a simple TodoList application built with React for the frontend, Express.js for the backend, and Firebase as the database. It allows users to add, delete, and update tasks in a persistent and real-time database.
+This project is a simple TodoList application built with React for the frontend, Express.js for the backend, and Firebase as the database. Utilizing RESTful API principles, it allows users to interact with the application in a standard and predictable way, enabling the addition, deletion, and updating of tasks in a persistent and real-time database. 
 ![TodoList Screenshot](https://i.imgur.com/UwTPDYb.png)
 
 ## Features
