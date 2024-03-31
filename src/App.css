@@ -45,4 +45,25 @@ li {
   margin: 10px 0;
   padding: 10px;
   border-radius: 4px;
+  white-space: normal; /* 確保內容不是在一行顯示 */
+  word-wrap: break-word; /* 在單詞達到邊界時進行換行 */
+  overflow-wrap: break-word; /* 在單詞達到邊界時進行換行 */
+}
+
+/* onDragEnd */
+.drag-handle {
+  cursor: grab;
+  padding: 0 10px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* 当手柄被按下时 */
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* 您可能还想添加一些拖拽时的样式 */
+.dragging-over {
+  background-color: lightblue; /* 当拖拽项经过一个可放置区域时的背景色 */
 }

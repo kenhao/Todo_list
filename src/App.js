@@ -19,6 +19,7 @@ const App = () => {
     fetchTodos();
   }, []);
 
+  // fetch todos
   const fetchTodos = () => {
     fetch('http://localhost:3001/todos')
       .then(response => response.json())
